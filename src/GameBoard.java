@@ -40,9 +40,11 @@ public class GameBoard {
     public int maxValuePruning = 0;
     public int minValuePruning = 0;
 
-    public int timeCutoff = 10000;
-    public int depthCutoff = 0;
+    public int timeCutoff = 1000;
+    public int depthCutoff = 10;
     public long startTime = 0;
+
+    public String moveValues = "";
 
     public int difficulty = 3;
 
@@ -173,10 +175,11 @@ public class GameBoard {
         ArrayList<Integer> moveChoices = new ArrayList<>();
 
         int bestMoveValue = Integer.MIN_VALUE;
-
+        moveValues = "";
         for (int i = 0; i < possibleMoves.size(); i++) {
             int moveValue = minValue(possibleMoves.get(i), -1000, 1000, 0, otherPlayer(player));
-
+            System.out.print(moveValue + ", ");
+            moveValues += moveValue + ", ";
             if (moveValue > bestMoveValue) {
                 moveChoices = new ArrayList();
                 moveChoices.add(i);
@@ -226,7 +229,6 @@ public class GameBoard {
 
     private int maxValue(BoardState state, int a, int b, int currentDepth, int player) {
         nodesExplored++;
-        if (currentDepth > depthReached) depthReached = currentDepth;
 
         ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
 
@@ -234,12 +236,18 @@ public class GameBoard {
 
         if (depthCutoff > 0 && currentDepth >= depthCutoff) {
             cutoffOccurred = true;
-            return evaluateBoard(state, player);
+            return evaluateBoard(state, player, currentDepth);
+        }
+
+        if (currentDepth > depthReached) depthReached = currentDepth;
+
+        if (currentDepth > 10) {
+            System.out.println("wtf?");
         }
 
         if ((System.currentTimeMillis() - startTime) > timeCutoff) {
             cutoffOccurred = true;
-            return evaluateBoard(state, player);
+            return evaluateBoard(state, player, currentDepth);
         }
 
         int v = Integer.MIN_VALUE;
@@ -258,7 +266,6 @@ public class GameBoard {
 
     private int minValue(BoardState state, int a, int b, int currentDepth, int player) {
         nodesExplored++;
-        if (currentDepth > depthReached) depthReached = currentDepth;
 
         ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
 
@@ -266,12 +273,18 @@ public class GameBoard {
 
         if (depthCutoff > 0 && currentDepth >= depthCutoff) {
             cutoffOccurred = true;
-            return evaluateBoard(state, otherPlayer(player));
+            return evaluateBoard(state, otherPlayer(player), currentDepth);
+        }
+
+        if (currentDepth > depthReached) depthReached = currentDepth;
+
+        if (currentDepth > 10) {
+            System.out.println("wtf?");
         }
 
         if ((System.currentTimeMillis() - startTime) > timeCutoff) {
             cutoffOccurred = true;
-            return evaluateBoard(state, otherPlayer(player));
+            return evaluateBoard(state, otherPlayer(player), currentDepth);
         }
 
         int v = Integer.MAX_VALUE;
@@ -289,15 +302,19 @@ public class GameBoard {
     }
 
     // evaluation function
-    private int evaluateBoard(BoardState boardState, int player) {
-            int X3 = boardState.checkNumPlays(player, 3);
-            int X2 = boardState.checkNumPlays(player, 2);
-            int X1 = boardState.checkNumPlays(player, 1);
-            int O3 = boardState.checkNumPlays(otherPlayer(player), 3);
-            int O2 = boardState.checkNumPlays(otherPlayer(player), 2);
-            int O1 = boardState.checkNumPlays(otherPlayer(player), 1);
+    private int evaluateBoard(BoardState boardState, int player, int depth) {
+//        return 10;
+        int X3 = boardState.checkNumPlays(player, 3);
+        int X2 = boardState.checkNumPlays(player, 2);
+        int X1 = boardState.checkNumPlays(player, 1);
 
-            return 6 * X3 + 3 * X2 + X1 - (6 * O3 + 3 * O2 + O1);
+        int O3 = boardState.checkNumPlays(otherPlayer(player), 3);
+        int O2 = boardState.checkNumPlays(otherPlayer(player), 2);
+        int O1 = boardState.checkNumPlays(otherPlayer(player), 1);
+
+        int value = (100 + depth) * X3 + (10 + depth) * X2 + depth * X1 - ((100 + depth) * O3 + (10 + depth) * O2 + depth * O1);
+
+        return value;
     }
 
     // button pressed handler
@@ -340,6 +357,13 @@ public class GameBoard {
 
     // update the global message based on the game stats
     private void updateMessage() {
+        for (int i = 0; i < 9; i++) {
+            if (boardState.checkWinBoard(USER, i)) boardState.wins[i] = USER;
+            else if (boardState.checkWinBoard(COMPUTER, i)) boardState.wins[i] = COMPUTER;
+            else if (boardState.checkTieBoard(i)) boardState.wins[i] = TIE;
+            else boardState.wins[i] = 0;
+        }
+
         if (boardState.checkWinGame(USER)) {
             gameWinner = USER;
             System.out.println("USER wins");

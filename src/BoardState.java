@@ -46,7 +46,7 @@ public class BoardState {
 
     // translate column / row to a position (0 - 15)
     private int getPositionForMove(int c, int r) {
-        return c + r * WIDTH;
+        return c + r * 3;
     }
 
     // set move in moves array for player
@@ -63,8 +63,8 @@ public class BoardState {
         int lastBoard = lastMove.y / HEIGHT;
         int lastPosition = lastMove.y % HEIGHT;
 
-        if (checkWinBoard(lastPlayer, lastBoard)) return -1;
-        if (checkTieBoard(lastBoard)) return -1;
+//        if (checkWinBoard(lastPlayer, lastBoard)) return -1;
+//        if (checkTieBoard(lastBoard)) return -1;
         if (checkWinBoard(GameBoard.USER, lastPosition)) {
             return -1;
         }
@@ -135,13 +135,13 @@ public class BoardState {
         for (int i = 0; i < WIDTH; i++) {
             count = 0;
             for (int j = 0; j < HEIGHT; j++) {
-                if (moves[i*HEIGHT + j] == player) count++;
+                if (moves[j*HEIGHT + i] == player) count++;
             }
 
             if (count == WIDTH) return true;
         }
 
-        // check horizontals
+        // check diagonals
         count = 0;
         for (int i = 0; i < HEIGHT; i++) {
             if (moves[i*HEIGHT + i] == player) count++;
@@ -150,7 +150,7 @@ public class BoardState {
 
         count = 0;
         for (int i = 0; i < HEIGHT; i++) {
-            if (moves[i*HEIGHT + (HEIGHT - i)] == player) count++;
+            if (moves[i*HEIGHT + (HEIGHT - i - 1)] == player) count++;
         }
         if (count == HEIGHT) return true;
 
@@ -166,53 +166,57 @@ public class BoardState {
         int count;
 
         // check horizontals
-        for (int i = 0; i < HEIGHT; i++) {
+        for (int i = 0; i < 3; i++) {
             count = 0;
-            for (int j = 0; j < WIDTH; j++) {
-                if (moves[getPositionForMove(j, i)] == player) count++;
+            for (int j = 0; j < 3; j++) {
+                if (wins[getPositionForMove(j, i)] == player) count++;
+                else if (wins[getPositionForMove(j, i)] == 0) {}
                 else {
                     count = 0;
                     break;
                 }
             }
 
-            if (count == WIDTH) total++;
+            if (count == plays) total++;
         }
 
         // check verticals
-        for (int i = 0; i < WIDTH; i++) {
+        for (int i = 0; i < 3; i++) {
             count = 0;
-            for (int j = 0; j < HEIGHT; j++) {
-                if (moves[getPositionForMove(i, j)] == player) count++;
+            for (int j = 0; j < 3; j++) {
+                if (wins[getPositionForMove(i, j)] == player) count++;
+                else if (wins[getPositionForMove(i, j)] == 0) {}
                 else {
                     count = 0;
                     break;
                 }
             }
 
-            if (count == HEIGHT) total++;
+            if (count == plays) total++;
         }
 
         // check horizontals
         count = 0;
-        for (int i = 0; i < HEIGHT; i++) {
-            if (moves[getPositionForMove(i, i)] == player) count++;
+        for (int i = 0; i < 3; i++) {
+            if (wins[getPositionForMove(i, i)] == player) count++;
+            else if (wins[getPositionForMove(i, i)] == 0) {}
             else {
                 count = 0;
                 break;
             }
         }
-        if (count == HEIGHT) total++;
+        if (count == plays) total++;
 
         count = 0;
-        for (int i = 0; i < HEIGHT; i++) {
-            if (moves[getPositionForMove(i, HEIGHT - i - 1)] == player) count++;
+        for (int i = 0; i < 3; i++) {
+            if (wins[getPositionForMove(i, 3 - i - 1)] == player) count++;
+            else if (wins[getPositionForMove(i, 3 - i - 1)] == 0) {}
             else {
                 count = 0;
                 break;
             }
         }
-        if (count == HEIGHT) total++;
+        if (count == plays) total++;
 
         return total;
     }

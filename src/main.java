@@ -11,45 +11,80 @@ import java.util.Scanner;
 public class main {
     static JButton[] buttons;
     static GameBoard gameBoard;
+    static JTextArea label;
+    static int player1Win;
+    static int player2Win;
+    static int ties;
 
     public static void main(String[] args) {
-        gameBoard = new GameBoard("Player 1", "Computer", GameBoard.USER);
+        player1Win = 0;
+        player2Win = 0;
+        ties = 0;
 
-        Boolean gameOver = false;
-        Scanner in = new Scanner(System.in);
+        while (true) {
+            gameBoard = new GameBoard("Player 1", "Computer", GameBoard.USER);
 
-        JFrame frame = new JFrame("Ultimate Tic Tac Toe");
+            Boolean gameOver = false;
+            Scanner in = new Scanner(System.in);
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            JFrame frame = new JFrame("Ultimate Tic Tac Toe");
 
-        JPanel panel = new JPanel();
-        panel.setLayout(null);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        buttons = new JButton[81];
-        setUI();
-        for (JButton button : buttons) {
-            panel.add(button);
-        }
+            JPanel panel = new JPanel();
+            panel.setLayout(null);
 
-        frame.add(panel);
-        frame.setSize(500, 500);
+            buttons = new JButton[81];
+            setUI();
+            for (JButton button : buttons) {
+                panel.add(button);
+            }
+            panel.add(label);
+
+            frame.add(panel);
+            frame.setSize(482, 482 + 128);
 //        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+            frame.setVisible(true);
 
-        while (!gameOver) {
-            gameBoard.printBoard();
+            while (!gameOver) {
+                String labelText = "";
+                labelText += "max depth: " + gameBoard.depthReached + "\n";
+                labelText += "cutoff: " + gameBoard.cutoffOccurred + "\n";
+                labelText += "p1: " + player1Win + " p2: " + player2Win + " t: " + ties + "\n";
+                labelText += "moveValues: " + gameBoard.moveValues + "\n";
+                label.setText(labelText);
+                gameBoard.printBoard();
+                updateUI();
+
+                System.out.print("Make your move in board " + gameBoard.boardState.currentBoard + ": ");
+                String input = "00";
+//                input = in.nextLine();
+//                gameBoard.boardState.currentBoard = -1;
+
+                gameBoard.userMoveInput(input);
+                gameBoard.printBoard();
+                updateUI();
+                System.out.println("Computer making move...");
+                gameBoard.userMoveInput(input);
+
+                if (gameBoard.getGameWinner() != -1) gameOver = true;
+            }
+
             updateUI();
 
-            System.out.print("Make your move in board " + gameBoard.boardState.currentBoard + ": ");
-            String input = "00"; //in.nextLine();
-
-            gameBoard.userMoveInput(input);
-            gameBoard.printBoard();
-            updateUI();
-            System.out.println("Computer making move...");
-            gameBoard.userMoveInput(input);
-
-            if (gameBoard.getGameWinner() != -1) gameOver = true;
+            switch (gameBoard.getGameWinner()) {
+                case 1:
+                    player1Win++;
+                    break;
+                case 2:
+                    player2Win++;
+                    break;
+                case 3:
+                    ties++;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -88,6 +123,10 @@ public class main {
             y += largeSpacing;
             position += 18;
         }
+
+        label = new JTextArea("Text");
+        label.setBounds(24, 482, 434, 128);
+
     }
 
     public static void updateUI() {
@@ -98,7 +137,6 @@ public class main {
             else buttons[i].setBackground(Color.white);
 
             if (gameBoard.boardState.wins[board] != 0) {
-                System.out.println("boardwin: " + gameBoard.boardState.wins[board]);
                 if (gameBoard.boardState.wins[board] == 1) buttons[i].setBackground(Color.blue);
                 if (gameBoard.boardState.wins[board] == 2) buttons[i].setBackground(Color.red);
                 if (gameBoard.boardState.wins[board] == 3) buttons[i].setBackground(Color.green);
@@ -111,7 +149,6 @@ public class main {
             }
         }
         int lastMove = gameBoard.boardState.lastMove.y;
-        System.out.println("lastmove: " + lastMove);
         if (lastMove > -1) {
             int player = gameBoard.boardState.lastMove.x;
             if (player == 1)
