@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3e57f330-55f1-4669-bff1-f51111dff80c" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/artifacts/AIForGames_jar.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/GameBoard.java" afterPath="$PROJECT_DIR$/src/GameBoard.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,11 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="133">
-              <caret line="53" column="42" lean-forward="false" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="42" />
+            <state relative-caret-position="219">
+              <caret line="63" column="32" lean-forward="false" selection-start-line="63" selection-start-column="32" selection-end-line="63" selection-end-column="32" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -32,14 +30,16 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GameBoard.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GameBoard.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/GameBoard.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="181" column="43" lean-forward="false" selection-start-line="181" selection-start-column="43" selection-end-line="181" selection-end-column="43" />
+            <state relative-caret-position="203">
+              <caret line="153" column="26" lean-forward="false" selection-start-line="153" selection-start-column="26" selection-end-line="153" selection-end-column="26" />
               <folding>
-                <element signature="e#0#12866#0" expanded="true" />
+                <element signature="e#0#12553#0" expanded="true" />
                 <element signature="imports" expanded="true" />
+                <element signature="e#3393#3394#0" expanded="true" />
+                <element signature="e#3431#3432#0" expanded="true" />
                 <element signature="e#3475#3476#0" expanded="true" />
                 <element signature="e#3514#3515#0" expanded="true" />
               </folding>
@@ -122,8 +122,8 @@
       <list>
         <option value="/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar!/com/apple/laf/AquaButtonUI.class" />
         <option value="$PROJECT_DIR$/src/BoardState.java" />
-        <option value="$PROJECT_DIR$/src/GameBoard.java" />
         <option value="$PROJECT_DIR$/src/main.java" />
+        <option value="$PROJECT_DIR$/src/GameBoard.java" />
       </list>
     </option>
   </component>
@@ -513,8 +513,10 @@
         <state relative-caret-position="675">
           <caret line="52" column="29" lean-forward="true" selection-start-line="52" selection-start-column="29" selection-end-line="52" selection-end-column="29" />
           <folding>
-            <element signature="e#0#12866#0" expanded="true" />
+            <element signature="e#0#12553#0" expanded="true" />
             <element signature="imports" expanded="true" />
+            <element signature="e#3393#3394#0" expanded="true" />
+            <element signature="e#3431#3432#0" expanded="true" />
             <element signature="e#3475#3476#0" expanded="true" />
             <element signature="e#3514#3515#0" expanded="true" />
           </folding>
@@ -553,8 +555,10 @@
         <state relative-caret-position="1710">
           <caret line="114" column="42" lean-forward="false" selection-start-line="114" selection-start-column="39" selection-end-line="114" selection-end-column="42" />
           <folding>
-            <element signature="e#0#12866#0" expanded="true" />
+            <element signature="e#0#12553#0" expanded="true" />
             <element signature="imports" expanded="true" />
+            <element signature="e#3393#3394#0" expanded="true" />
+            <element signature="e#3431#3432#0" expanded="true" />
             <element signature="e#3475#3476#0" expanded="true" />
             <element signature="e#3514#3515#0" expanded="true" />
           </folding>
@@ -635,25 +639,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameBoard.java">
+    <entry file="file://$PROJECT_DIR$/src/main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="181" column="43" lean-forward="false" selection-start-line="181" selection-start-column="43" selection-end-line="181" selection-end-column="43" />
+        <state relative-caret-position="219">
+          <caret line="63" column="32" lean-forward="false" selection-start-line="63" selection-start-column="32" selection-end-line="63" selection-end-column="32" />
           <folding>
-            <element signature="e#0#12866#0" expanded="true" />
             <element signature="imports" expanded="true" />
-            <element signature="e#3475#3476#0" expanded="true" />
-            <element signature="e#3514#3515#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main.java">
+    <entry file="file://$PROJECT_DIR$/src/GameBoard.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="53" column="42" lean-forward="false" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="42" />
+        <state relative-caret-position="203">
+          <caret line="153" column="26" lean-forward="false" selection-start-line="153" selection-start-column="26" selection-end-line="153" selection-end-column="26" />
           <folding>
+            <element signature="e#0#12553#0" expanded="true" />
             <element signature="imports" expanded="true" />
+            <element signature="e#3393#3394#0" expanded="true" />
+            <element signature="e#3431#3432#0" expanded="true" />
+            <element signature="e#3475#3476#0" expanded="true" />
+            <element signature="e#3514#3515#0" expanded="true" />
           </folding>
         </state>
       </provider>

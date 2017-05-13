@@ -40,8 +40,8 @@ public class GameBoard {
     public int maxValuePruning = 0;
     public int minValuePruning = 0;
 
-    public int timeCutoff = 1000;
-    public int depthCutoff = 10;
+    public int timeCutoff = 10000;
+    public int depthCutoff = 0;
     public long startTime = 0;
 
     public String moveValues = "";
@@ -149,14 +149,9 @@ public class GameBoard {
 
         int move = 0;
         if (type == 0) {
-            move = getBestMove(boardState, player);
+            move = getMinimaxMove(boardState, player);
         } else {
             move = getRandomMove(boardState);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
 
         boardState.makeMove(player, move);
@@ -169,7 +164,7 @@ public class GameBoard {
         updateMessage();
     }
 
-    private int getBestMove(BoardState state, int player) {
+    private int getMinimaxMove(BoardState state, int player) {
         ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
 
         ArrayList<Integer> moveChoices = new ArrayList<>();
@@ -241,10 +236,6 @@ public class GameBoard {
 
         if (currentDepth > depthReached) depthReached = currentDepth;
 
-        if (currentDepth > 10) {
-            System.out.println("wtf?");
-        }
-
         if ((System.currentTimeMillis() - startTime) > timeCutoff) {
             cutoffOccurred = true;
             return evaluateBoard(state, player, currentDepth);
@@ -277,10 +268,6 @@ public class GameBoard {
         }
 
         if (currentDepth > depthReached) depthReached = currentDepth;
-
-        if (currentDepth > 10) {
-            System.out.println("wtf?");
-        }
 
         if ((System.currentTimeMillis() - startTime) > timeCutoff) {
             cutoffOccurred = true;
