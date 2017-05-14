@@ -107,6 +107,7 @@ public class main {
                         button.setBounds(x, y, width, height);
                         button.setOpaque(true);
                         button.setMargin(new Insets(0,0,0,0));
+                        button.setFont(new Font("Arial", Font.PLAIN, 24));
 
                         buttons[position] = button;
 
