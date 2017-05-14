@@ -5,8 +5,10 @@ import java.util.Random;
  * Created by alex on 5/14/17.
  */
 public class MiniMaxAgent extends AIAgent {
-    public MiniMaxAgent(String name) {
+    public MiniMaxAgent(String name, int maxDepth, int maxTime) {
         this.name = name;
+        this.depthCutoff = maxDepth;
+        this.timeCutoff = maxTime;
     }
 
     @Override
@@ -24,7 +26,7 @@ public class MiniMaxAgent extends AIAgent {
         int bestMoveValue = Integer.MIN_VALUE;
         moveValues = "";
         for (int i = 0; i < possibleMoves.size(); i++) {
-            int moveValue = minValue(possibleMoves.get(i), -1000, 1000, 1, GameBoard.otherPlayer(player));
+            int moveValue = minValue(possibleMoves.get(i), 1, GameBoard.otherPlayer(player));
             System.out.print(moveValue + ", ");
             moveValues += moveValue + ", ";
             if (moveValue > bestMoveValue) {
@@ -40,7 +42,7 @@ public class MiniMaxAgent extends AIAgent {
         return possibleMoves.get(moveChoices.get(random.nextInt(moveChoices.size()))).lastMove.y;
     }
 
-    private int minValue(BoardState state, int a, int b, int currentDepth, int player) {
+    private int minValue(BoardState state, int currentDepth, int player) {
         nodesExplored++;
 
         ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
@@ -62,17 +64,13 @@ public class MiniMaxAgent extends AIAgent {
         int v = Integer.MAX_VALUE;
 
         for (int i = 0; i < possibleMoves.size(); i++) {
-            v = Math.min(v, maxValue(possibleMoves.get(i), a, b, currentDepth++, GameBoard.otherPlayer(player)));
-            if (v <= a) {
-                return v;
-            }
-            b = Math.min(b, v);
+            v = Math.min(v, maxValue(possibleMoves.get(i), currentDepth++, GameBoard.otherPlayer(player)));
         }
 
         return v;
     }
 
-    private int maxValue(BoardState state, int a, int b, int currentDepth, int player) {
+    private int maxValue(BoardState state, int currentDepth, int player) {
         nodesExplored++;
 
         ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
@@ -94,11 +92,7 @@ public class MiniMaxAgent extends AIAgent {
         int v = Integer.MIN_VALUE;
 
         for (int i = 0; i < possibleMoves.size(); i++) {
-            v = Math.max(v, minValue(possibleMoves.get(i), a, b, currentDepth++, GameBoard.otherPlayer(player)));
-            if (v >= b) {
-                return v;
-            }
-            a = Math.max(a, v);
+            v = Math.max(v, minValue(possibleMoves.get(i), currentDepth++, GameBoard.otherPlayer(player)));
         }
 
         return v;

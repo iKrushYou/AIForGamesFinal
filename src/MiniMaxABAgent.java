@@ -5,8 +5,10 @@ import java.util.Random;
  * Created by alex on 5/14/17.
  */
 public class MiniMaxABAgent extends AIAgent {
-    public MiniMaxABAgent(String name) {
+    public MiniMaxABAgent(String name, int maxDepth, int maxTime) {
         this.name = name;
+        this.depthCutoff = maxDepth;
+        this.timeCutoff = maxTime;
     }
 
     public int getMove(BoardState boardState, int player) {

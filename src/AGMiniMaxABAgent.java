@@ -6,8 +6,10 @@ import java.util.Random;
  * Created by alex on 5/14/17.
  */
 public class AGMiniMaxABAgent extends AIAgent {
-    public AGMiniMaxABAgent(String name) {
+    public AGMiniMaxABAgent(String name, int maxDepth, int maxTime) {
         this.name = name;
+        this.depthCutoff = maxDepth;
+        this.timeCutoff = maxTime;
     }
 
     @Override

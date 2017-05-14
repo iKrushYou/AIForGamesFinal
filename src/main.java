@@ -46,13 +46,10 @@ public class main {
 
         while (true) {
             startTime = System.currentTimeMillis();
-            AIAgent player1 = new MiniMaxABAgent("MiniMaxABAgent");
-            player1.timeCutoff = 10000;
-            player1.depthCutoff = 3;
-            AIAgent player2 = new AGMiniMaxABAgent("AGMiniMaxABAgent");
-            player2.timeCutoff = 10000;
-            player2.depthCutoff = 3;
-            gameBoard = new GameBoard(player1, player2, GameBoard.PLAYER1);
+            AIAgent miniMaxAgent = new MiniMaxAgent("MiniMaxABAgent", 3, 10000);
+            AIAgent miniMaxABAgent = new MiniMaxABAgent("MiniMaxABAgent", 3, 10000);
+            AIAgent agMiniMaxABAgent = new AGMiniMaxABAgent("AGMiniMaxABAgent", 3, 10000);
+            gameBoard = new GameBoard(agMiniMaxABAgent, miniMaxAgent, GameBoard.PLAYER1);
 
             Boolean gameOver = false;
             while (!gameOver) {
