@@ -49,7 +49,8 @@ public class main {
             AIAgent miniMaxAgent = new MiniMaxAgent("MiniMaxABAgent", 3, 10000);
             AIAgent miniMaxABAgent = new MiniMaxABAgent("MiniMaxABAgent", 3, 10000);
             AIAgent agMiniMaxABAgent = new AGMiniMaxABAgent("AGMiniMaxABAgent", 3, 10000);
-            gameBoard = new GameBoard(agMiniMaxABAgent, miniMaxAgent, GameBoard.PLAYER1);
+            AIAgent negaMaxAgent = new NegaMaxAgent("NegaMaxAgent", 3, 10000);
+            gameBoard = new GameBoard(negaMaxAgent, agMiniMaxABAgent, GameBoard.PLAYER1);
 
             Boolean gameOver = false;
             while (!gameOver) {
