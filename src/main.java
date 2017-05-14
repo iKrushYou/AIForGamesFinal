@@ -106,6 +106,8 @@ public class main {
                         JButton button = new JButton(" ");
                         button.setBounds(x, y, width, height);
                         button.setOpaque(true);
+                        button.setMargin(new Insets(0,0,0,0));
+
                         buttons[position] = button;
 
                         x += width + smallSpacing;
