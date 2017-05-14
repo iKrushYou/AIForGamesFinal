@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import java.awt.*;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -40,7 +41,7 @@ public class GameBoard {
     public int maxValuePruning = 0;
     public int minValuePruning = 0;
 
-    public int timeCutoff = 10000;
+    public int timeCutoff = 1000;
     public int depthCutoff = 0;
     public long startTime = 0;
 
@@ -150,9 +151,13 @@ public class GameBoard {
         int move = 0;
         if (type == 0) {
             move = getMinimaxMove(boardState, player);
-        } else {
+        } else if (type == 1){
             move = getRandomMove(boardState);
         }
+        else {
+            move = getAdvancedMinimaxMove(boardState, player);
+        }
+
 
         boardState.makeMove(player, move);
 
@@ -193,6 +198,31 @@ public class GameBoard {
 
         Random random = new Random();
         return possibleMoves.get(random.nextInt(possibleMoves.size())).lastMove.y;
+    }
+    private int getAdvancedMinimaxMove(BoardState state, int player) {
+        ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
+
+        ArrayList<Integer> moveChoices = new ArrayList<>();
+
+        int bestMoveValue = Integer.MIN_VALUE;
+        moveValues = "";
+        for (int i = 0; i < possibleMoves.size(); i++) {
+            possibleMoves.get(i).initialComputerMove = new Point(possibleMoves.get(i).lastMove);
+            int moveValue = minValueAdvance(possibleMoves.get(i), -1000000, 1000000, 0, otherPlayer(player));
+            System.out.print(moveValue + ", ");
+            moveValues += moveValue + ", ";
+            if (moveValue > bestMoveValue) {
+                moveChoices = new ArrayList();
+                moveChoices.add(i);
+                bestMoveValue = moveValue;
+            } else if (moveValue == bestMoveValue) {
+                moveChoices.add(i);
+            }
+        }
+
+        Random random = new Random();
+        return possibleMoves.get(moveChoices.get(random.nextInt(moveChoices.size()))).lastMove.y;
+
     }
 
     // function to add 1000s commas to integers
@@ -254,6 +284,38 @@ public class GameBoard {
 
         return v;
     }
+    private int maxValueAdvance(BoardState state, int a, int b, int currentDepth, int player) {
+        nodesExplored++;
+
+        ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
+
+        if (terminalTest(state)) return utilityValue(state, currentDepth);
+
+        if (depthCutoff > 0 && currentDepth >= depthCutoff) {
+            cutoffOccurred = true;
+            return evaluateBoardAdvance(state, player, currentDepth);
+        }
+
+        if (currentDepth > depthReached) depthReached = currentDepth;
+
+        if ((System.currentTimeMillis() - startTime) > timeCutoff) {
+            cutoffOccurred = true;
+            return evaluateBoardAdvance(state, player, currentDepth);
+        }
+
+        int v = Integer.MIN_VALUE;
+
+        for (int i = 0; i < possibleMoves.size(); i++) {
+            v = Math.max(v, minValueAdvance(possibleMoves.get(i), a, b, currentDepth++, otherPlayer(player)));
+            if (v >= b) {
+                maxValuePruning++;
+                return v;
+            }
+            a = Math.max(a, v);
+        }
+
+        return v;
+    }
 
     private int minValue(BoardState state, int a, int b, int currentDepth, int player) {
         nodesExplored++;
@@ -288,6 +350,39 @@ public class GameBoard {
         return v;
     }
 
+    private int minValueAdvance(BoardState state, int a, int b, int currentDepth, int player) {
+        nodesExplored++;
+
+        ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
+
+        if (terminalTest(state)) return utilityValue(state, currentDepth);
+
+        if (depthCutoff > 0 && currentDepth >= depthCutoff) {
+            cutoffOccurred = true;
+            return evaluateBoardAdvance(state, otherPlayer(player), currentDepth);
+        }
+
+        if (currentDepth > depthReached) depthReached = currentDepth;
+
+        if ((System.currentTimeMillis() - startTime) > timeCutoff) {
+            cutoffOccurred = true;
+            return evaluateBoardAdvance(state, otherPlayer(player), currentDepth);
+        }
+
+        int v = Integer.MAX_VALUE;
+
+        for (int i = 0; i < possibleMoves.size(); i++) {
+            v = Math.min(v, maxValueAdvance(possibleMoves.get(i), a, b, currentDepth++, otherPlayer(player)));
+            if (v <= a) {
+                minValuePruning++;
+                return v;
+            }
+            b = Math.min(b, v);
+        }
+
+        return v;
+    }
+
     // evaluation function
     private int evaluateBoard(BoardState boardState, int player, int depth) {
 //        return 10;
@@ -300,6 +395,32 @@ public class GameBoard {
         int O1 = boardState.checkNumPlays(otherPlayer(player), 1);
 
         int value = (100 + depth) * X3 + (10 + depth) * X2 + depth * X1 - ((100 + depth) * O3 + (10 + depth) * O2 + depth * O1);
+
+
+
+        return value;
+    }
+    private int evaluateBoardAdvance(BoardState boardState, int player, int depth) {
+//        return 10;
+        int X3 = boardState.checkNumPlays(player, 3);
+        int X2 = boardState.checkNumPlays(player, 2);
+        int X1 = boardState.checkNumPlays(player, 1);
+
+        int O3 = boardState.checkNumPlays(otherPlayer(player), 3);
+        int O2 = boardState.checkNumPlays(otherPlayer(player), 2);
+        int O1 = boardState.checkNumPlays(otherPlayer(player), 1);
+
+        int x3 = boardState.checkNumPlaysBoard(player, 3, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
+        int x2 = boardState.checkNumPlaysBoard(player, 2, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
+        int x1 = boardState.checkNumPlaysBoard(player, 1, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
+
+        int o3 = boardState.checkNumPlaysBoard(otherPlayer(player), 3, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
+        int o2 = boardState.checkNumPlaysBoard(otherPlayer(player), 2, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
+        int o1 = boardState.checkNumPlaysBoard(otherPlayer(player), 1, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
+
+        int value = ((100000 + depth) * X3 + (10000 + depth) * X2 + (depth + 1000) * X1) - ((100000 + depth) * O3 + (10000 + depth) * O2 + (depth + 1000) * O1) + ((100 + depth) * x3 + (10 + depth) * x2 + depth * x1) - ((100 + depth) * o3 + (10 + depth) * o2 + depth * o1);
+
+
 
         return value;
     }
@@ -326,9 +447,9 @@ public class GameBoard {
         if (gameWinner == -1) {
             if (currentPlayer == USER) {
 //                playerMove(position);
-                computerMove(USER, 1);
+                computerMove(USER, 0);
             } else {
-                computerMove(COMPUTER, 0);
+                computerMove(COMPUTER, 2);
             }
         }
 
