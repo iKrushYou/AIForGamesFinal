@@ -177,7 +177,7 @@ public class GameBoard {
         int bestMoveValue = Integer.MIN_VALUE;
         moveValues = "";
         for (int i = 0; i < possibleMoves.size(); i++) {
-            int moveValue = minValue(possibleMoves.get(i), -1000, 1000, 0, otherPlayer(player));
+            int moveValue = minValue(possibleMoves.get(i), -1000, 1000, 1, otherPlayer(player));
             System.out.print(moveValue + ", ");
             moveValues += moveValue + ", ";
             if (moveValue > bestMoveValue) {
@@ -208,7 +208,7 @@ public class GameBoard {
         moveValues = "";
         for (int i = 0; i < possibleMoves.size(); i++) {
             possibleMoves.get(i).initialComputerMove = new Point(possibleMoves.get(i).lastMove);
-            int moveValue = minValueAdvance(possibleMoves.get(i), -1000000, 1000000, 0, otherPlayer(player));
+            int moveValue = minValueAdvance(possibleMoves.get(i), -1000000, 1000000, 1, otherPlayer(player));
             System.out.print(moveValue + ", ");
             moveValues += moveValue + ", ";
             if (moveValue > bestMoveValue) {

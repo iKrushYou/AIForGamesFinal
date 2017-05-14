@@ -106,13 +106,12 @@ public class main {
 
     public static void setLabelText() {
         String labelText = "";
+        labelText += "A-B MiniMax vs A-B MiniMax AG Optimized\n";
         labelText += "Player1 Wins: " + player1Win + " Player2 Wins: " + player2Win + " Ties: " + ties + "\n";
         labelText += "Nodes Explored: " + gameBoard.addCommas(gameBoard.nodesExplored) + "\n";
         labelText += "Game Time: " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds\n";
         labelText += "Average Game Time: " + calculateAverage(gameTimes)/1000.0 + " seconds\n";
-
-        labelText += "max depth: " + gameBoard.depthReached + "\n";
-        labelText += "moveValues: " + gameBoard.moveValues + "\n";
+        labelText += "TimeCutoff: " + gameBoard.timeCutoff + " DepthCutoff: " + gameBoard.depthCutoff + " MaxDepth: " + gameBoard.depthReached + "\n";
         label.setText(labelText);
     }
 

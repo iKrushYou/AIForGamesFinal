@@ -12,3 +12,5 @@
 *.jar
 
 *.class
+
+*.xml
