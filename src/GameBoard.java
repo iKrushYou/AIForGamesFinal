@@ -328,7 +328,7 @@ public class GameBoard {
 //                playerMove(position);
                 computerMove(USER, 1);
             } else {
-                computerMove();
+                computerMove(COMPUTER, 0);
             }
         }
 
@@ -358,7 +358,7 @@ public class GameBoard {
             gameWinner = COMPUTER;
             System.out.println("COMPUTER wins");
         } else if (boardState.checkTieGame()) {
-            gameWinner = 0;
+            gameWinner = 3;
             System.out.println("It's a tie");
         }
 
