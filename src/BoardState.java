@@ -19,6 +19,7 @@ public class BoardState {
     private final int HEIGHT; // game height
 
     Point lastMove; // "coordinates" of last move (player, moveLocation)
+    Point initialComputerMove;
     int currentBoard;
 
     public BoardState(int width, int height) {
@@ -30,6 +31,7 @@ public class BoardState {
 
         this.lastMove = new Point(-1, -1);
         this.currentBoard = -1;
+        this.initialComputerMove = new Point(-1, -1);
     }
 
     // copy board state into new one
@@ -41,6 +43,7 @@ public class BoardState {
         this.WIDTH = boardState.WIDTH;
         this.HEIGHT = boardState.HEIGHT;
         this.lastMove = new Point(boardState.lastMove);
+        this.initialComputerMove = new Point(boardState.initialComputerMove);
         this.currentBoard = boardState.currentBoard;
     }
 
@@ -162,6 +165,10 @@ public class BoardState {
     //      how many rows / cols / diags are there with two Os and no Xs
     // used in the eval function
     public int checkNumPlays(int player, int plays) {
+        return checkNumPlaysBoard(player, plays, wins);
+    }
+
+    public int checkNumPlaysBoard(int player, int plays, int[] board) {
         int total = 0;
         int count;
 
