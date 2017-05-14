@@ -38,11 +38,9 @@ public class GameBoard {
     public Boolean cutoffOccurred = false;
     public int depthReached = 0;
     public long nodesExplored = 0;
-    public int maxValuePruning = 0;
-    public int minValuePruning = 0;
 
     public int timeCutoff = 100000;
-    public int depthCutoff = 1;
+    public int depthCutoff = 3;
     public long startTime = 0;
 
     public String moveValues = "";
@@ -160,7 +158,7 @@ public class GameBoard {
 
         cutoffOccurred = agent.cutoffOccurred;
         nodesExplored = agent.nodesExplored;
-        depthReached = agent.depthReached;
+        depthReached = agent.depthReached + 1;
 
         boardState.makeMove(player, move);
 

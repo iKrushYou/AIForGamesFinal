@@ -17,6 +17,8 @@ public class MiniMaxAgentAG extends AIAgent {
     }
 
     private int getAdvancedMinimaxMove(BoardState state, int player) {
+        startTime = System.currentTimeMillis();
+
         ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
 
         ArrayList<Integer> moveChoices = new ArrayList<>();
