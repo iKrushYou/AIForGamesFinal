@@ -5,11 +5,12 @@ import java.util.Random;
  * Created by alex on 5/14/17.
  */
 public class RandomAgent extends AIAgent {
-    public RandomAgent(BoardState boardState, int player) {
-        this.boardState = boardState;
-        this.player = player;
+    public RandomAgent(String name) {
+        this.name = name;
     }
-    public int getMove() {
+
+    @Override
+    public int getMove(BoardState boardState, int player) {
         ArrayList<BoardState> possibleMoves = boardState.getPossibleMoves(player);
 
         Random random = new Random();

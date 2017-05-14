@@ -68,10 +68,10 @@ public class BoardState {
 
 //        if (checkWinBoard(lastPlayer, lastBoard)) return -1;
 //        if (checkTieBoard(lastBoard)) return -1;
-        if (checkWinBoard(GameBoard.USER, lastPosition)) {
+        if (checkWinBoard(GameBoard.PLAYER1, lastPosition)) {
             return -1;
         }
-        if (checkWinBoard(GameBoard.COMPUTER, lastPosition)) {
+        if (checkWinBoard(GameBoard.PLAYER2, lastPosition)) {
             return -1;
         }
         if (checkTieBoard(lastPosition)) {
@@ -85,7 +85,7 @@ public class BoardState {
     private Boolean checkMove(int position) {
         int playedBoard = position/9;
         if (currentBoard != -1 && currentBoard != playedBoard) return false;
-        if (checkWinBoard(GameBoard.USER, playedBoard) || checkWinBoard(GameBoard.COMPUTER, playedBoard) || checkTieBoard(playedBoard)) return false;
+        if (checkWinBoard(GameBoard.PLAYER1, playedBoard) || checkWinBoard(GameBoard.PLAYER2, playedBoard) || checkTieBoard(playedBoard)) return false;
         return moves[position] == 0;
     }
 

@@ -4,11 +4,8 @@
  * and open the template in the editor.
  */
 
-import java.awt.*;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Random;
 
 /**
  *
@@ -18,14 +15,14 @@ public class GameBoard {
     private int firstMove; // which player went first
     private int currentPlayer; // keeps track of current player
 
-    public final String player1Name; // self-explanatory
-    private final String player2Name; // self-explanatory
+    public AIAgent player1;
+    public AIAgent player2;
 
     BoardState boardState; // current board state held in object
     private int gameWinner; // did someone win (-1 for no, 1 or 2 for yes)
 
-    public static final int USER = 1; // define int value for user
-    public static final int COMPUTER = 2; // definte int value for computer
+    public static final int PLAYER1 = 1; // define int value for user
+    public static final int PLAYER2 = 2; // definte int value for computer
     public static final int TIE = 3; // definte int value for computer
 
     public static final int WIDTH = 9; // game board width
@@ -47,9 +44,9 @@ public class GameBoard {
 
     public int difficulty = 3;
 
-    public GameBoard(String player1Name, String player2Name, int firstMove) {
-        this.player1Name = player1Name;
-        this.player2Name = player2Name;
+    public GameBoard(AIAgent player1, AIAgent player2, int firstMove) {
+        this.player1 = player1;
+        this.player2 = player2;
 
         resetGame(firstMove);
     }
@@ -77,16 +74,8 @@ public class GameBoard {
     }
 
     public String getPlayerName(int player) {
-        if (player == USER) return player1Name;
-        else return player2Name;
-    }
-
-    public String getPlayer1Name() {
-        return player1Name;
-    }
-
-    public String getPlayer2Name() {
-        return player2Name;
+        if (player == PLAYER1) return player1.name;
+        else return player2.name;
     }
 
     public String getGameMessage() {
@@ -102,8 +91,8 @@ public class GameBoard {
     }
 
     public static int otherPlayer(int player) {
-        if (player == USER) return COMPUTER;
-        else return USER;
+        if (player == PLAYER1) return PLAYER2;
+        else return PLAYER1;
     }
 
     public void switchPlayers() {
@@ -112,13 +101,13 @@ public class GameBoard {
 
     // get X or O for the current player
     public String getMoveForPlayer(int player) {
-        if (player == USER) return "O";
-        if (player == COMPUTER) return "X";
+        if (player == PLAYER1) return "O";
+        if (player == PLAYER2) return "X";
         return " ";
     }
 
     public void playerMove(int position) {
-        if (boardState.makeMove(USER, position)) {
+        if (boardState.makeMove(PLAYER1, position)) {
             switchPlayers();
         }
 
@@ -127,7 +116,7 @@ public class GameBoard {
 
     // algorith for computer move using A-B pruning
     public void computerMove() {
-        computerMove(COMPUTER);
+        computerMove(PLAYER2);
     }
 
     public void computerMove(int player) {
@@ -142,19 +131,10 @@ public class GameBoard {
         startTime = System.currentTimeMillis();
 
         AIAgent agent;
-        if (type == 0) {
-            agent = new MiniMaxAgent(boardState, player);
-            agent.depthCutoff = depthCutoff;
-            agent.timeCutoff = timeCutoff;
-        } else if (type == 1) {
-            agent = new RandomAgent(boardState, player);
-        } else {
-            agent = new MiniMaxAgentAG(boardState, player);
-            agent.depthCutoff = depthCutoff;
-            agent.timeCutoff = timeCutoff;
-        }
+        if (player == 1) agent = player1;
+        else agent = player2;
 
-        int move = agent.getMove();
+        int move = agent.getMove(boardState, player);
 
         cutoffOccurred = agent.cutoffOccurred;
         nodesExplored = agent.nodesExplored;
@@ -184,7 +164,7 @@ public class GameBoard {
 //        System.out.println("button pressed (" + c + ", " + r + ")");
 
         if (gameWinner == -1) {
-            if (currentPlayer == USER) {
+            if (currentPlayer == PLAYER1) {
                 playerMove(c + r * WIDTH);
             } else {
                 computerMove();
@@ -197,11 +177,11 @@ public class GameBoard {
     public void userMoveInput(String move) {
         int position = getPositionForMove(move);
         if (gameWinner == -1) {
-            if (currentPlayer == USER) {
+            if (currentPlayer == PLAYER1) {
 //                playerMove(position);
-                computerMove(USER, 0);
+                computerMove(PLAYER1, 0);
             } else {
-                computerMove(COMPUTER, 2);
+                computerMove(PLAYER2, 2);
             }
         }
 
@@ -218,26 +198,26 @@ public class GameBoard {
     // update the global message based on the game stats
     private void updateMessage() {
         for (int i = 0; i < 9; i++) {
-            if (boardState.checkWinBoard(USER, i)) boardState.wins[i] = USER;
-            else if (boardState.checkWinBoard(COMPUTER, i)) boardState.wins[i] = COMPUTER;
+            if (boardState.checkWinBoard(PLAYER1, i)) boardState.wins[i] = PLAYER1;
+            else if (boardState.checkWinBoard(PLAYER2, i)) boardState.wins[i] = PLAYER2;
             else if (boardState.checkTieBoard(i)) boardState.wins[i] = TIE;
             else boardState.wins[i] = 0;
         }
 
-        if (boardState.checkWinGame(USER)) {
-            gameWinner = USER;
-            System.out.println("USER wins");
-        } else if (boardState.checkWinGame(COMPUTER)) {
-            gameWinner = COMPUTER;
-            System.out.println("COMPUTER wins");
+        if (boardState.checkWinGame(PLAYER1)) {
+            gameWinner = PLAYER1;
+            System.out.println("PLAYER1 wins");
+        } else if (boardState.checkWinGame(PLAYER2)) {
+            gameWinner = PLAYER2;
+            System.out.println("PLAYER2 wins");
         } else if (boardState.checkTieGame()) {
             gameWinner = 3;
             System.out.println("It's a tie");
         }
 
         switch (gameWinner) {
-            case USER:
-            case COMPUTER:
+            case PLAYER1:
+            case PLAYER2:
                 gameMessage = getPlayerName(gameWinner) + " has won!";
                 break;
             case 0:

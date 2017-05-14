@@ -1,5 +1,3 @@
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -48,7 +46,13 @@ public class main {
 
         while (true) {
             startTime = System.currentTimeMillis();
-            gameBoard = new GameBoard("Player 1", "Computer", GameBoard.USER);
+            AIAgent player1 = new MiniMaxABAgent("MiniMaxABAgent");
+            player1.timeCutoff = 10000;
+            player1.depthCutoff = 3;
+            AIAgent player2 = new AGMiniMaxABAgent("AGMiniMaxABAgent");
+            player2.timeCutoff = 10000;
+            player2.depthCutoff = 3;
+            gameBoard = new GameBoard(player1, player2, GameBoard.PLAYER1);
 
             Boolean gameOver = false;
             while (!gameOver) {
@@ -106,12 +110,11 @@ public class main {
 
     public static void setLabelText() {
         String labelText = "";
-        labelText += "A-B MiniMax vs A-B MiniMax AG Optimized\n";
+        labelText += gameBoard.player1.name + "(" + gameBoard.player1.depthCutoff + ") vs " + gameBoard.player2.name + "(" + gameBoard.player2.depthCutoff + ")\n";
         labelText += "Player1 Wins: " + player1Win + " Player2 Wins: " + player2Win + " Ties: " + ties + "\n";
         labelText += "Nodes Explored: " + gameBoard.addCommas(gameBoard.nodesExplored) + "\n";
         labelText += "Game Time: " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds\n";
         labelText += "Average Game Time: " + calculateAverage(gameTimes)/1000.0 + " seconds\n";
-        labelText += "TimeCutoff: " + gameBoard.timeCutoff + " DepthCutoff: " + gameBoard.depthCutoff + " MaxDepth: " + gameBoard.depthReached + "\n";
         label.setText(labelText);
     }
 

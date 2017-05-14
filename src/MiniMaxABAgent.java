@@ -4,12 +4,11 @@ import java.util.Random;
 /**
  * Created by alex on 5/14/17.
  */
-public class MiniMaxAgent extends AIAgent {
-    public MiniMaxAgent(String name) {
+public class MiniMaxABAgent extends AIAgent {
+    public MiniMaxABAgent(String name) {
         this.name = name;
     }
 
-    @Override
     public int getMove(BoardState boardState, int player) {
         return getMinimaxMove(boardState, player);
     }

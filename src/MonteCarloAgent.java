@@ -6,13 +6,11 @@ import java.util.Random;
  * Created by alex on 5/14/17.
  */
 public class MonteCarloAgent extends AIAgent {
-
-    public MonteCarloAgent(BoardState boardState, int player) {
-        this.boardState = boardState;
-        this.player = player;
+    public MonteCarloAgent(String name) {
+        this.name = name;
     }
     
-    public int getMove() {
+    public int getMove(BoardState boardState, int player) {
         return getAdvancedMinimaxMove(boardState, player);
     }
 
@@ -132,15 +130,15 @@ public class MonteCarloAgent extends AIAgent {
     }
 
     public static Boolean terminalTest(BoardState state) {
-        return state.checkTieGame() || state.checkWinGame(GameBoard.USER) || state.checkWinGame(GameBoard.COMPUTER);
+        return state.checkTieGame() || state.checkWinGame(GameBoard.PLAYER1) || state.checkWinGame(GameBoard.PLAYER2);
     }
 
     public static int utilityValue(BoardState state, int depth) {
-        if (state.checkWinGame(GameBoard.COMPUTER)) {
+        if (state.checkWinGame(GameBoard.PLAYER2)) {
             return 1000 - depth; // adjust the value with the depth
         }
 
-        if (state.checkWinGame(GameBoard.USER)) {
+        if (state.checkWinGame(GameBoard.PLAYER1)) {
             return depth - 1000; // adjust the value with the depth
         }
 
