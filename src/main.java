@@ -15,44 +15,44 @@ public class main {
     static int player1Win;
     static int player2Win;
     static int ties;
+    static long startTime;
+    static ArrayList<Long> gameTimes;
 
     public static void main(String[] args) {
         player1Win = 0;
         player2Win = 0;
         ties = 0;
 
+        Scanner in = new Scanner(System.in);
+
+        JFrame frame = new JFrame("Ultimate Tic Tac Toe");
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(null);
+
+        buttons = new JButton[81];
+        setUI();
+        for (JButton button : buttons) {
+            panel.add(button);
+        }
+        panel.add(label);
+
+        frame.add(panel);
+        frame.setSize(482, 482 + 128);
+//        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
+        gameTimes = new ArrayList<>();
+
         while (true) {
+            startTime = System.currentTimeMillis();
             gameBoard = new GameBoard("Player 1", "Computer", GameBoard.USER);
 
             Boolean gameOver = false;
-            Scanner in = new Scanner(System.in);
-
-            JFrame frame = new JFrame("Ultimate Tic Tac Toe");
-
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            JPanel panel = new JPanel();
-            panel.setLayout(null);
-
-            buttons = new JButton[81];
-            setUI();
-            for (JButton button : buttons) {
-                panel.add(button);
-            }
-            panel.add(label);
-
-            frame.add(panel);
-            frame.setSize(482, 482 + 128);
-//        frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-
             while (!gameOver) {
-                String labelText = "";
-                labelText += "max depth: " + gameBoard.depthReached + "\n";
-                labelText += "cutoff: " + gameBoard.cutoffOccurred + "\n";
-                labelText += "p1: " + player1Win + " p2: " + player2Win + " t: " + ties + "\n";
-                labelText += "moveValues: " + gameBoard.moveValues + "\n";
-                label.setText(labelText);
+                setLabelText();
                 gameBoard.printBoard();
                 updateUI();
 
@@ -62,6 +62,7 @@ public class main {
 //                gameBoard.boardState.currentBoard = -1;
 
                 gameBoard.userMoveInput(input);
+                setLabelText();
                 gameBoard.printBoard();
                 updateUI();
                 System.out.println("Computer making move...");
@@ -70,6 +71,7 @@ public class main {
                 if (gameBoard.getGameWinner() != -1) gameOver = true;
             }
 
+            setLabelText();
             updateUI();
 
             switch (gameBoard.getGameWinner()) {
@@ -85,7 +87,33 @@ public class main {
                 default:
                     break;
             }
+
+            long gameTime = System.currentTimeMillis() - startTime;
+            gameTimes.add(gameTime);
         }
+    }
+
+    public static double calculateAverage(ArrayList <Long> marks) {
+        Long sum = Long.valueOf(0);
+        if(!marks.isEmpty()) {
+            for (Long mark : marks) {
+                sum += mark;
+            }
+            return sum.doubleValue() / marks.size();
+        }
+        return sum;
+    }
+
+    public static void setLabelText() {
+        String labelText = "";
+        labelText += "Player1 Wins: " + player1Win + " Player2 Wins: " + player2Win + " Ties: " + ties + "\n";
+        labelText += "Nodes Explored: " + gameBoard.addCommas(gameBoard.nodesExplored) + "\n";
+        labelText += "Game Time: " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds\n";
+        labelText += "Average Game Time: " + calculateAverage(gameTimes)/1000.0 + " seconds\n";
+
+        labelText += "max depth: " + gameBoard.depthReached + "\n";
+        labelText += "moveValues: " + gameBoard.moveValues + "\n";
+        label.setText(labelText);
     }
 
     public static void setUI() {

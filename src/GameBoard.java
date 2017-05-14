@@ -41,8 +41,8 @@ public class GameBoard {
     public int maxValuePruning = 0;
     public int minValuePruning = 0;
 
-    public int timeCutoff = 1000;
-    public int depthCutoff = 0;
+    public int timeCutoff = 100000;
+    public int depthCutoff = 2;
     public long startTime = 0;
 
     public String moveValues = "";
