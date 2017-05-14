@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="AIForGames">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/artifacts/AIForGames_jar/AIForGames.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

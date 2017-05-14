@@ -103,10 +103,11 @@ public class main {
             for (int k = 0; k < 3; k++) {
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
-                        JButton button = new JButton(" ");
+                        JButton button = new JButton("  ");
                         button.setBounds(x, y, width, height);
                         button.setOpaque(true);
                         buttons[position] = button;
+                        button.setFont(new Font("Arial", Font.PLAIN, 8));
 
                         x += width + smallSpacing;
 
