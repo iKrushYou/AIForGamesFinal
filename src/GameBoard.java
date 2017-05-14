@@ -449,7 +449,11 @@ public class GameBoard {
 //                playerMove(position);
                 computerMove(USER, 0);
             } else {
+<<<<<<< HEAD
                 computerMove(COMPUTER, 2);
+=======
+                computerMove(COMPUTER, 0);
+>>>>>>> origin/ag
             }
         }
 
@@ -479,7 +483,7 @@ public class GameBoard {
             gameWinner = COMPUTER;
             System.out.println("COMPUTER wins");
         } else if (boardState.checkTieGame()) {
-            gameWinner = 0;
+            gameWinner = 3;
             System.out.println("It's a tie");
         }
 
