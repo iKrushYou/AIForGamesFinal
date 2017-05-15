@@ -1,38 +1,86 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
  * Created by alex on 5/14/17.
  */
+
+
 public class MonteCarloAgent extends AIAgent {
+
+    Map<BoardState, Integer> visited = new HashMap<>();
+    Map<BoardState, Integer> wins = new HashMap<>();
+    Map<BoardState, Integer> visits = new HashMap<>();
+    BoardState original;
+    boolean firstMove = true;
+
+
     public MonteCarloAgent(String name) {
         this.name = name;
     }
-    
+
     public int getMove(BoardState boardState, int player) {
-        return getAdvancedMinimaxMove(boardState, player);
+        if(firstMove){
+            ArrayList<BoardState> possibleMoves = boardState.getPossibleMoves(player);
+
+            Random random = new Random();
+            firstMove = false;
+            return possibleMoves.get(random.nextInt(possibleMoves.size())).lastMove.y;
+
+        }
+        else{
+            return getMonteCarloMove(boardState, player);
+        }
+
     }
 
-    private int getAdvancedMinimaxMove(BoardState state, int player) {
+    private int getMonteCarloMove(BoardState state, int player) {
         ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
+
 
         ArrayList<Integer> moveChoices = new ArrayList<>();
 
-        int bestMoveValue = Integer.MIN_VALUE;
+
+
+        float bestMoveValue = Integer.MIN_VALUE;
         moveValues = "";
         for (int i = 0; i < possibleMoves.size(); i++) {
+
+            visited.put(possibleMoves.get(i), 0);
+            wins.put(possibleMoves.get(i), 0);
+            visits.put(possibleMoves.get(i), 0);
+
+            int value = evaluateBoardAdvance(possibleMoves.get(i), player, 1);
+            visited.put(possibleMoves.get(i),1);
+            if (value > 0){
+                visits.put(original, visits.get(possibleMoves.get(i))+1);
+                wins.put(original, wins.get(possibleMoves.get(i))+value);
+            }
+            else{
+                visits.put(original, visits.get(possibleMoves.get(i))+1);
+            }
+
+
+            original = possibleMoves.get(i);
             possibleMoves.get(i).initialComputerMove = new Point(possibleMoves.get(i).lastMove);
-            int moveValue = minValueAdvance(possibleMoves.get(i), -1000000, 1000000, 1, GameBoard.otherPlayer(player));
+            float moveValue = minValueAdvance(possibleMoves.get(i), -1000000, 1000000, 1, GameBoard.otherPlayer(player));
+
+            moveValue = wins.get(original)/visits.get(original);
             System.out.print(moveValue + ", ");
             moveValues += moveValue + ", ";
             if (moveValue > bestMoveValue) {
                 moveChoices = new ArrayList();
                 moveChoices.add(i);
                 bestMoveValue = moveValue;
-            } else if (moveValue == bestMoveValue) {
+
+            } else if(moveValue == bestMoveValue) {
                 moveChoices.add(i);
             }
+
+
         }
 
         Random random = new Random();
@@ -44,6 +92,18 @@ public class MonteCarloAgent extends AIAgent {
         nodesExplored++;
 
         ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
+
+        for (int i = 0; i < possibleMoves.size(); i++){
+
+            int value = evaluateBoardAdvance(possibleMoves.get(i), player, currentDepth);
+            if (value > 0){
+                visits.put(original, visits.get(original)+1);
+                wins.put(original, wins.get(original)+value);
+            }
+            else{
+                visits.put(original, visits.get(original)+1);
+            }
+        }
 
         if (terminalTest(state)) return utilityValue(state, currentDepth);
 
@@ -77,6 +137,18 @@ public class MonteCarloAgent extends AIAgent {
 
         ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
 
+        for (int i = 0; i < possibleMoves.size(); i++){
+
+            int value = evaluateBoardAdvance(possibleMoves.get(i), player, currentDepth);
+            if (value > 0){
+                visits.put(original, visits.get(original)+1);
+                wins.put(original, wins.get(original)+value);
+            }
+            else{
+                visits.put(original, visits.get(original)+1);
+            }
+        }
+
         if (terminalTest(state)) return utilityValue(state, currentDepth);
 
         if (depthCutoff > 0 && currentDepth >= depthCutoff) {
@@ -106,6 +178,8 @@ public class MonteCarloAgent extends AIAgent {
 
     private int evaluateBoardAdvance(BoardState boardState, int player, int depth) {
 //        return 10;
+
+
         int X3 = boardState.checkNumPlays(player, 3);
         int X2 = boardState.checkNumPlays(player, 2);
         int X1 = boardState.checkNumPlays(player, 1);
@@ -123,7 +197,6 @@ public class MonteCarloAgent extends AIAgent {
         int o1 = boardState.checkNumPlaysBoard(GameBoard.otherPlayer(player), 1, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
 
         int value = ((100000 + depth) * X3 + (10000 + depth) * X2 + (depth + 1000) * X1) - ((100000 + depth) * O3 + (10000 + depth) * O2 + (depth + 1000) * O1) + ((100 + depth) * x3 + (10 + depth) * x2 + depth * x1) - ((100 + depth) * o3 + (10 + depth) * o2 + depth * o1);
-
 
 
         return value;
@@ -149,3 +222,6 @@ public class MonteCarloAgent extends AIAgent {
         return 0;
     }
 }
+
+
+
