@@ -120,10 +120,6 @@ public class GameBoard {
     }
 
     public void computerMove(int player) {
-        computerMove(player, 0);
-    }
-
-    public void computerMove(int player, int type) {
         if (gameWinner != -1) return;
 
         totalTime = 0;
@@ -174,15 +170,9 @@ public class GameBoard {
         updateMessage();
     }
 
-    public void userMoveInput(String move) {
-        int position = getPositionForMove(move);
+    public void userMoveInput(int position) {
         if (gameWinner == -1) {
-            if (currentPlayer == PLAYER1) {
-//                playerMove(position);
-                computerMove(PLAYER1, 0);
-            } else {
-                computerMove(PLAYER2, 2);
-            }
+            playerMove(position);
         }
 
         updateMessage();

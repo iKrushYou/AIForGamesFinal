@@ -82,7 +82,7 @@ public class BoardState {
     }
 
     // check if move is available
-    private Boolean checkMove(int position) {
+    public Boolean checkMove(int position) {
         int playedBoard = position/9;
         if (currentBoard != -1 && currentBoard != playedBoard) return false;
         if (checkWinBoard(GameBoard.PLAYER1, playedBoard) || checkWinBoard(GameBoard.PLAYER2, playedBoard) || checkTieBoard(playedBoard)) return false;
