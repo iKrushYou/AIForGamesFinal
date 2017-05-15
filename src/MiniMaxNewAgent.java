@@ -50,13 +50,15 @@ public class MiniMaxNewAgent extends AIAgent {
     public int alphabeta(BoardState boardState, int player, int alpha, int beta, int currentDepth) {
         nodesExplored++;
 
-        if (terminalTest(boardState)) return utilityValue(boardState, currentDepth);
+        if (terminalTest(boardState)) {
+            return utilityValue(boardState, currentDepth);
+        }
 
         if (currentDepth >= depthReached) depthReached = currentDepth;
 
         if ((System.currentTimeMillis() - startTime > timeCutoff) || (depthCutoff > -1 && currentDepth > depthCutoff)) {
             cutoffOccurred = true;
-            return evaluateBoardAdvance(boardState, this.player, currentDepth);
+            return evaluateBoardAdvance(boardState, player, currentDepth);
         }
 
         ArrayList<BoardState> possibleMoves = boardState.getPossibleMoves(player);
