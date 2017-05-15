@@ -11,11 +11,13 @@ import java.util.Random;
 
 public class MonteCarloAgent extends AIAgent {
 
-    Map<BoardState, Integer> visited = new HashMap<>();
-    Map<BoardState, Integer> wins = new HashMap<>();
-    Map<BoardState, Integer> visits = new HashMap<>();
+    Map<Point, Integer> visited = new HashMap<>();
+    Map<Point, Integer> wins = new HashMap<>();
+    Map<Point, Integer> visits = new HashMap<>();
+    ArrayList<Point> path = new ArrayList<>();
+
     BoardState original;
-    boolean firstMove = true;
+    int depth = 0;
 
 
     public MonteCarloAgent(String name, int maxDepth, int maxTime) {
@@ -25,17 +27,9 @@ public class MonteCarloAgent extends AIAgent {
     }
 
     public int getMove(BoardState boardState, int player) {
-        if(firstMove){
-            ArrayList<BoardState> possibleMoves = boardState.getPossibleMoves(player);
-
-            Random random = new Random();
-            firstMove = false;
-            return possibleMoves.get(random.nextInt(possibleMoves.size())).lastMove.y;
-
-        }
-        else{
+       
             return getMonteCarloMove(boardState, player);
-        }
+
 
     }
 
@@ -43,48 +37,49 @@ public class MonteCarloAgent extends AIAgent {
         ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
 
 
-        ArrayList<Integer> moveChoices = new ArrayList<>();
 
 
 
-        float bestMoveValue = Integer.MIN_VALUE;
-        moveValues = "";
+
+
         for (int i = 0; i < possibleMoves.size(); i++) {
-
-            visited.put(possibleMoves.get(i), 0);
-            wins.put(possibleMoves.get(i), 0);
-            visits.put(possibleMoves.get(i), 0);
-
-            int value = evaluateBoardAdvance(possibleMoves.get(i), player, 1);
-            visited.put(possibleMoves.get(i),1);
-            if (value > 0){
-                visits.put(original, visits.get(possibleMoves.get(i))+1);
-                wins.put(original, wins.get(possibleMoves.get(i))+value);
-            }
-            else{
-                visits.put(original, visits.get(possibleMoves.get(i))+1);
+            if(!visited.containsKey(possibleMoves.get(i).lastMove)) {
+                visited.put(possibleMoves.get(i).lastMove, 0);
+                wins.put(possibleMoves.get(i).lastMove, 0);
+                visits.put(possibleMoves.get(i).lastMove, 0);
             }
 
+        }
 
-            original = possibleMoves.get(i);
-            possibleMoves.get(i).initialComputerMove = new Point(possibleMoves.get(i).lastMove);
-            float moveValue = minValueAdvance(possibleMoves.get(i), -1000000, 1000000, 1, GameBoard.otherPlayer(player));
+        for (int i = 0; i < possibleMoves.size(); i++) {
+            BoardState selectedLeaf = selection(state, player);
+            int result = expansionAndRollOut(selectedLeaf, player);
+            backPropagation(result);
 
-            if(visits.get(original) != 0) {
-                moveValue = wins.get(original) / visits.get(original);
-                System.out.print(moveValue + ", ");
+            if(cutoffOccurred) {
+                return makeDecision(state,player);
             }
-            else{
-                moveValue = 0;
+        }
+
+        return makeDecision(state,player);
+    }
+
+    public int makeDecision(BoardState state, int player){
+        ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
+        ArrayList<Integer> moveChoices = new ArrayList<>();
+        double bestValue = Integer.MIN_VALUE;
+        double moveValue = Integer.MIN_VALUE;
+        for (int i = 0; i < possibleMoves.size(); i++) {
+            if(visits.get(possibleMoves.get(i).lastMove) != 0) {
+                moveValue = wins.get(possibleMoves.get(i).lastMove) / visits.get(possibleMoves.get(i).lastMove);
             }
-            System.out.print(moveValue + ", ");
-            moveValues += moveValue + ", ";
-            if (moveValue > bestMoveValue) {
+            else { moveValue = 0;}
+            if (moveValue > bestValue) {
                 moveChoices = new ArrayList();
                 moveChoices.add(i);
-                bestMoveValue = moveValue;
+                bestValue = moveValue;
 
-            } else if(moveValue == bestMoveValue) {
+            } else if(moveValue == bestValue) {
                 moveChoices.add(i);
             }
 
@@ -96,141 +91,88 @@ public class MonteCarloAgent extends AIAgent {
 
     }
 
-    private int maxValueAdvance(BoardState state, int a, int b, int currentDepth, int player) {
-        nodesExplored++;
 
-        if (terminalTest(state)) return utilityValue(state, currentDepth);
-
-        if (depthCutoff > 0 && currentDepth >= depthCutoff) {
-            cutoffOccurred = true;
-            return evaluateBoardAdvance(state, player, currentDepth);
-        }
-
-        if (currentDepth > depthReached) depthReached = currentDepth;
-
-        if ((System.currentTimeMillis() - startTime) > timeCutoff) {
-            cutoffOccurred = true;
-            return evaluateBoardAdvance(state, player, currentDepth);
-        }
-
-        ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
-
-        for (int i = 0; i < possibleMoves.size(); i++){
-
-            int value = evaluateBoardAdvance(possibleMoves.get(i), player, currentDepth);
-            if (value > 0){
-                visits.put(original, visits.get(original)+1);
-                wins.put(original, wins.get(original)+value);
-            }
-            else{
-                visits.put(original, visits.get(original)+1);
-            }
-        }
-
-
-
-        int v = Integer.MIN_VALUE;
-
-        for (int i = 0; i < possibleMoves.size(); i++) {
-            v = Math.max(v, minValueAdvance(possibleMoves.get(i), a, b, currentDepth++, GameBoard.otherPlayer(player)));
-            if (v >= b) {
-                return v;
-            }
-            a = Math.max(a, v);
-        }
-
-        return v;
-    }
-
-    private int minValueAdvance(BoardState state, int a, int b, int currentDepth, int player) {
-        nodesExplored++;
-        if (terminalTest(state)) return utilityValue(state, currentDepth);
-
-        if (depthCutoff > 0 && currentDepth >= depthCutoff) {
-            cutoffOccurred = true;
-            return evaluateBoardAdvance(state, GameBoard.otherPlayer(player), currentDepth);
-        }
-
-        if (currentDepth > depthReached) depthReached = currentDepth;
-
-        if ((System.currentTimeMillis() - startTime) > timeCutoff) {
-            cutoffOccurred = true;
-            return evaluateBoardAdvance(state, GameBoard.otherPlayer(player), currentDepth);
-        }
-        ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
-
-        for (int i = 0; i < possibleMoves.size(); i++){
-
-            int value = evaluateBoardAdvance(possibleMoves.get(i), player, currentDepth);
-            if (value > 0){
-                visits.put(original, visits.get(original)+1);
-                wins.put(original, wins.get(original)+value);
-            }
-            else{
-                visits.put(original, visits.get(original)+1);
-            }
-        }
-
-
-
-        int v = Integer.MAX_VALUE;
-
-        for (int i = 0; i < possibleMoves.size(); i++) {
-            v = Math.min(v, maxValueAdvance(possibleMoves.get(i), a, b, currentDepth++, GameBoard.otherPlayer(player)));
-            if (v <= a) {
-                return v;
-            }
-            b = Math.min(b, v);
-        }
-
-        return v;
-    }
-
-    private int evaluateBoardAdvance(BoardState boardState, int player, int depth) {
-//        return 10;
-
-
-        int X3 = boardState.checkNumPlays(player, 3);
-        int X2 = boardState.checkNumPlays(player, 2);
-        int X1 = boardState.checkNumPlays(player, 1);
-
-        int O3 = boardState.checkNumPlays(GameBoard.otherPlayer(player), 3);
-        int O2 = boardState.checkNumPlays(GameBoard.otherPlayer(player), 2);
-        int O1 = boardState.checkNumPlays(GameBoard.otherPlayer(player), 1);
-
-        int x3 = boardState.checkNumPlaysBoard(player, 3, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
-        int x2 = boardState.checkNumPlaysBoard(player, 2, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
-        int x1 = boardState.checkNumPlaysBoard(player, 1, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
-
-        int o3 = boardState.checkNumPlaysBoard(GameBoard.otherPlayer(player), 3, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
-        int o2 = boardState.checkNumPlaysBoard(GameBoard.otherPlayer(player), 2, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
-        int o1 = boardState.checkNumPlaysBoard(GameBoard.otherPlayer(player), 1, boardState.getSmallBoard(boardState.initialComputerMove.y/9));
-
-        int value = ((100000 + depth) * X3 + (10000 + depth) * X2 + (depth + 1000) * X1) - ((100000 + depth) * O3 + (10000 + depth) * O2 + (depth + 1000) * O1) + ((100 + depth) * x3 + (10 + depth) * x2 + depth * x1) - ((100 + depth) * o3 + (10 + depth) * o2 + depth * o1);
-
-
-        return value;
-    }
 
     public static Boolean terminalTest(BoardState state) {
         return state.checkTieGame() || state.checkWinGame(GameBoard.PLAYER1) || state.checkWinGame(GameBoard.PLAYER2);
+
     }
 
-    public static int utilityValue(BoardState state, int depth) {
-        if (state.checkWinGame(GameBoard.PLAYER2)) {
-            return 1000 - depth; // adjust the value with the depth
+
+    public BoardState selection(BoardState state, int player) {
+        if(terminalTest(state)){return state;}
+        ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
+
+        for (int i = 0; i < possibleMoves.size(); i++) {
+            if (visited.get(possibleMoves.get(i).lastMove) == 0) {
+                visited.put(possibleMoves.get(i).lastMove, 1);
+                path.add(possibleMoves.get(i).lastMove);
+                depth++;
+                return possibleMoves.get(i);
+            }
         }
 
-        if (state.checkWinGame(GameBoard.PLAYER1)) {
-            return depth - 1000; // adjust the value with the depth
-        }
+        Random random = new Random();
+        BoardState nextBoard = possibleMoves.get(random.nextInt(possibleMoves.size()));
+        path.add(nextBoard.lastMove);
+        depth++;
+        return selection(nextBoard, player);
 
-        if (state.checkTieGame()) {
+    }
+
+    public int expansionAndRollOut(BoardState state, int player){
+
+        if(terminalTest(state)){
+            if(state.checkWinGame(GameBoard.PLAYER1)){
+                return 1;
+            }
+            else return 0;
+        }
+        if (depthCutoff > 0 && depth >= depthCutoff) {
+            cutoffOccurred = true;
             return 0;
         }
 
-        return 0;
+        if (depth > depthReached) depthReached = depth;
+
+        if ((System.currentTimeMillis() - startTime) > timeCutoff) {
+            cutoffOccurred = true;
+            return 0;
+        }
+
+        ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
+
+
+
+        for(int i = 0; i < possibleMoves.size(); i++){
+            if (visited.get(possibleMoves.get(i).lastMove) == 0) {
+                visited.put(possibleMoves.get(i).lastMove, 1);
+                path.add(possibleMoves.get(i).lastMove);
+                depth++;
+                return expansionAndRollOut(possibleMoves.get(i), player);
+            }
+        }
+
+        return -1;
     }
+
+
+    public void backPropagation(int result){
+        if (result == -1){
+            path.clear();
+            return;
+        }
+
+        for (int i =0; i < path.size(); i++){
+            visits.put(path.get(i),visits.get(path.get(i))+1);
+            wins.put(path.get(i),wins.get(path.get(i))+result);
+
+        }
+
+        path.clear();
+
+    }
+
 }
 
 
