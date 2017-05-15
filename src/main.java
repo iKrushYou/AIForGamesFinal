@@ -68,34 +68,22 @@ public class main {
             Boolean playerMode = false;
 
             startTime = System.currentTimeMillis();
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-            AIAgent miniMaxAgent = new MiniMaxAgent("MiniMaxABAgent", 3, 1000);
-            AIAgent miniMaxABAgent = new MiniMaxABAgent("MiniMaxABAgent", 3, 1000);
-            AIAgent agMiniMaxABAgent = new AGMiniMaxABAgent("AGMiniMaxABAgent", 3, 1000);
-            AIAgent negaMaxAgent = new NegaMaxAgent("NegaMaxAgent", 3, 1000);
-            AIAgent MonteCarloAgent = new MonteCarloAgent("MonteCarloMMAgent", 100, 1000);
-            AIAgent RandomMonteCarloAgent = new RandomMonteCarloAgent("RandomMonteCarloAgent", 100, 1000);
-            gameBoard = new GameBoard(RandomMonteCarloAgent, MonteCarloAgent, GameBoard.PLAYER1);
-=======
-            AIAgent miniMaxAgent = new MiniMaxAgent("MiniMaxABAgent", 3, 10000);
-            AIAgent miniMaxABAgent = new MiniMaxABAgent("MiniMaxABAgent", 3, 10000);
-            AIAgent agMiniMaxABAgent = new AGMiniMaxABAgent("AGMiniMaxABAgent", 3, 10000);
-            AIAgent negaMaxAgent = new NegaMaxAgent("NegaMaxAgent", 3, 10000);
-            AIAgent miniMaxNewAgent = new MiniMaxNewAgent("MiniMax New", 3, 10000);
-            gameBoard = new GameBoard(agMiniMaxABAgent, miniMaxNewAgent, GameBoard.PLAYER1);
->>>>>>> origin/master
-=======
+
             AIAgent miniMaxAgent = new MiniMaxAgent("MiniMaxABAgent", 5, 10000);
             AIAgent miniMaxABAgent = new MiniMaxABAgent("MiniMaxABAgent", 5, 10000);
             AIAgent agMiniMaxABAgent = new AGMiniMaxABAgent("AGMiniMaxABAgent", 5, 10000);
             AIAgent negaMaxAgent = new NegaMaxAgent("NegaMaxAgent", 5, 10000);
             AIAgent miniMaxNewAgent = new MiniMaxNewAgent("MiniMax New", 5, 10000);
+            AIAgent monteCarloAgent = new MonteCarloAgent("MCTS", 5, 10000);
+            AIAgent randomMonteCarloAgent = new RandomMonteCarloAgent("MCTS Random", 5, 10000);
             AIAgent randomAgent = new RandomAgent("Random");
 //            gameBoard = new GameBoard(miniMaxNewAgent, randomAgent, GameBoard.PLAYER1);
 //            gameBoard = new GameBoard(agMiniMaxABAgent, randomAgent, GameBoard.PLAYER1);
-            gameBoard = new GameBoard(negaMaxAgent, randomAgent, GameBoard.PLAYER1);
->>>>>>> Stashed changes
+//            gameBoard = new GameBoard(negaMaxAgent, randomAgent, GameBoard.PLAYER1);
+//            gameBoard = new GameBoard(monteCarloAgent, randomMonteCarloAgent, GameBoard.PLAYER1);
+//            gameBoard = new GameBoard(randomMonteCarloAgent, miniMaxNewAgent, GameBoard.PLAYER1);
+            gameBoard = new GameBoard(randomMonteCarloAgent, agMiniMaxABAgent, GameBoard.PLAYER1);
+
             playerMove = -1;
 
             currentAgent = gameBoard.player1;
