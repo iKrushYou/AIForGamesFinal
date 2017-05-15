@@ -49,14 +49,16 @@ public class main {
         gameTimes = new ArrayList<>();
 
         while (true) {
-            Boolean playerMode = true;
+            Boolean playerMode = false;
 
             startTime = System.currentTimeMillis();
-            AIAgent miniMaxAgent = new MiniMaxAgent("MiniMaxABAgent", 3, 10000);
-            AIAgent miniMaxABAgent = new MiniMaxABAgent("MiniMaxABAgent", 3, 10000);
-            AIAgent agMiniMaxABAgent = new AGMiniMaxABAgent("AGMiniMaxABAgent", 3, 10000);
-            AIAgent negaMaxAgent = new NegaMaxAgent("NegaMaxAgent", 3, 10000);
-            gameBoard = new GameBoard(negaMaxAgent, agMiniMaxABAgent, GameBoard.PLAYER1);
+            AIAgent miniMaxAgent = new MiniMaxAgent("MiniMaxABAgent", 3, 1000);
+            AIAgent miniMaxABAgent = new MiniMaxABAgent("MiniMaxABAgent", 3, 1000);
+            AIAgent agMiniMaxABAgent = new AGMiniMaxABAgent("AGMiniMaxABAgent", 3, 1000);
+            AIAgent negaMaxAgent = new NegaMaxAgent("NegaMaxAgent", 3, 1000);
+            AIAgent MonteCarloAgent = new MonteCarloAgent("MonteCarloMMAgent", 100, 1000);
+            AIAgent RandomMonteCarloAgent = new RandomMonteCarloAgent("RandomMonteCarloAgent", 100, 1000);
+            gameBoard = new GameBoard(RandomMonteCarloAgent, MonteCarloAgent, GameBoard.PLAYER1);
             playerMove = -1;
 
             Boolean gameOver = false;
