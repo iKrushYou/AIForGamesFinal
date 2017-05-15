@@ -19,6 +19,9 @@ public class AGMiniMaxABAgent extends AIAgent {
 
     private int getAdvancedMinimaxMove(BoardState state, int player) {
         startTime = System.currentTimeMillis();
+        this.depthReached = 0;
+        this.nodesExplored = 0;
+        this.cutoffOccurred = false;
 
         ArrayList<BoardState> possibleMoves = state.getPossibleMoves(player);
 
@@ -140,11 +143,11 @@ public class AGMiniMaxABAgent extends AIAgent {
 
     public static int utilityValue(BoardState state, int depth) {
         if (state.checkWinGame(GameBoard.PLAYER2)) {
-            return 1000 - depth; // adjust the value with the depth
+            return 1000000 - depth; // adjust the value with the depth
         }
 
         if (state.checkWinGame(GameBoard.PLAYER1)) {
-            return depth - 1000; // adjust the value with the depth
+            return depth - 1000000; // adjust the value with the depth
         }
 
         if (state.checkTieGame()) {

@@ -19,6 +19,7 @@ public class main {
     static ArrayList<Long> gameTimes;
     static int playerMove;
     static int[] positionMap = {0,1,2,9,10,11,18,19,20,3,4,5,12,13,14,21,22,23,6,7,8,15,16,17,24,25,26,27,28,29,36,37,38,45,46,47,30,31,32,39,40,41,48,49,50,33,34,35,42,43,44,51,52,53,54,55,56,63,64,65,72,73,74,57,58,59,66,67,68,75,76,77,60,61,62,69,70,71,78,79,80};
+    static AIAgent currentAgent;
 
     public static void main(String[] args) {
         player1Win = 0;
@@ -46,12 +47,28 @@ public class main {
 //        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
+        Thread t1 = new Thread(new Runnable() {
+            public void run() {
+                while (true) {
+                    setLabelText();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }});
+
+        t1.start();
+
+
         gameTimes = new ArrayList<>();
 
         while (true) {
             Boolean playerMode = false;
 
             startTime = System.currentTimeMillis();
+<<<<<<< HEAD
             AIAgent miniMaxAgent = new MiniMaxAgent("MiniMaxABAgent", 3, 1000);
             AIAgent miniMaxABAgent = new MiniMaxABAgent("MiniMaxABAgent", 3, 1000);
             AIAgent agMiniMaxABAgent = new AGMiniMaxABAgent("AGMiniMaxABAgent", 3, 1000);
@@ -59,11 +76,20 @@ public class main {
             AIAgent MonteCarloAgent = new MonteCarloAgent("MonteCarloMMAgent", 100, 1000);
             AIAgent RandomMonteCarloAgent = new RandomMonteCarloAgent("RandomMonteCarloAgent", 100, 1000);
             gameBoard = new GameBoard(RandomMonteCarloAgent, MonteCarloAgent, GameBoard.PLAYER1);
+=======
+            AIAgent miniMaxAgent = new MiniMaxAgent("MiniMaxABAgent", 3, 10000);
+            AIAgent miniMaxABAgent = new MiniMaxABAgent("MiniMaxABAgent", 3, 10000);
+            AIAgent agMiniMaxABAgent = new AGMiniMaxABAgent("AGMiniMaxABAgent", 3, 10000);
+            AIAgent negaMaxAgent = new NegaMaxAgent("NegaMaxAgent", 3, 10000);
+            AIAgent miniMaxNewAgent = new MiniMaxNewAgent("MiniMax New", 3, 10000);
+            gameBoard = new GameBoard(agMiniMaxABAgent, miniMaxNewAgent, GameBoard.PLAYER1);
+>>>>>>> origin/master
             playerMove = -1;
+
+            currentAgent = gameBoard.player1;
 
             Boolean gameOver = false;
             while (!gameOver) {
-                setLabelText();
                 gameBoard.printBoard();
                 updateUI();
 
@@ -87,19 +113,21 @@ public class main {
                     gameBoard.userMoveInput(playerMove);
                     playerMove = -1;
                 } else {
+                    currentAgent = gameBoard.player1;
                     gameBoard.computerMove(GameBoard.PLAYER1);
                 }
 
-                setLabelText();
+//                setLabelText();
                 gameBoard.printBoard();
                 updateUI();
                 System.out.println("Computer making move...");
+                currentAgent = gameBoard.player2;
                 gameBoard.computerMove(GameBoard.PLAYER2);
 
                 if (gameBoard.getGameWinner() != -1) gameOver = true;
             }
 
-            setLabelText();
+//            setLabelText();
             updateUI();
 
             switch (gameBoard.getGameWinner()) {
@@ -133,13 +161,18 @@ public class main {
     }
 
     public static void setLabelText() {
-        String labelText = "";
-        labelText += gameBoard.player1.name + "(" + gameBoard.player1.depthCutoff + ") vs " + gameBoard.player2.name + "(" + gameBoard.player2.depthCutoff + ")\n";
-        labelText += "Player1 Wins: " + player1Win + " Player2 Wins: " + player2Win + " Ties: " + ties + "\n";
-        labelText += "Nodes Explored: " + gameBoard.addCommas(gameBoard.nodesExplored) + "\n";
-        labelText += "Game Time: " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds\n";
-        labelText += "Average Game Time: " + calculateAverage(gameTimes)/1000.0 + " seconds\n";
-        label.setText(labelText);
+        try {
+            String labelText = "";
+            labelText += gameBoard.player1.name + "(" + gameBoard.player1.depthCutoff + ") vs " + gameBoard.player2.name + "(" + gameBoard.player2.depthCutoff + ")\n";
+            labelText += "Player1 Wins: " + player1Win + " Player2 Wins: " + player2Win + " Ties: " + ties + "\n";
+            labelText += "Nodes Explored: " + gameBoard.addCommas(currentAgent.nodesExplored) + " MaxDepth: " + currentAgent.depthReached + "\n";
+            labelText += "Game Time: " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds\n";
+            labelText += "Average Game Time: " + calculateAverage(gameTimes)/1000.0 + " seconds\n";
+            labelText += "MoveValues: " + calculateAverage(gameTimes)/1000.0 + " seconds\n";
+            label.setText(labelText);
+        } catch (Exception e) {
+
+        }
     }
 
     public static void setUI() {

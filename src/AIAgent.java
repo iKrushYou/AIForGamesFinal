@@ -2,6 +2,7 @@
  * Created by alex on 5/14/17.
  */
 public abstract class AIAgent {
+    public int player;
     public String name;
 
     public String moveValues;
