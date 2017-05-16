@@ -71,18 +71,17 @@ public class main {
 
             AIAgent miniMaxAgent = new MiniMaxAgent("MiniMaxABAgent", 5, 10000);
             AIAgent miniMaxABAgent = new MiniMaxABAgent("MiniMaxABAgent", 5, 10000);
-            AIAgent agMiniMaxABAgent = new AGMiniMaxABAgent("AGMiniMaxABAgent", 5, 10000);
+            AIAgent agMiniMaxABAgent = new AGMiniMaxABAgent("AGMiniMaxABAgent", 3, 10000);
             AIAgent negaMaxAgent = new NegaMaxAgent("NegaMaxAgent", 5, 10000);
             AIAgent miniMaxNewAgent = new MiniMaxNewAgent("MiniMax New", 5, 10000);
             AIAgent monteCarloAgent = new MonteCarloAgent("MCTS", 5, 10000);
-            AIAgent randomMonteCarloAgent = new RandomMonteCarloAgent("MCTS Random", 5, 10000);
             AIAgent randomAgent = new RandomAgent("Random");
 //            gameBoard = new GameBoard(miniMaxNewAgent, randomAgent, GameBoard.PLAYER1);
 //            gameBoard = new GameBoard(agMiniMaxABAgent, randomAgent, GameBoard.PLAYER1);
 //            gameBoard = new GameBoard(negaMaxAgent, randomAgent, GameBoard.PLAYER1);
 //            gameBoard = new GameBoard(monteCarloAgent, randomMonteCarloAgent, GameBoard.PLAYER1);
 //            gameBoard = new GameBoard(randomMonteCarloAgent, miniMaxNewAgent, GameBoard.PLAYER1);
-            gameBoard = new GameBoard(randomMonteCarloAgent, agMiniMaxABAgent, GameBoard.PLAYER1);
+            gameBoard = new GameBoard(agMiniMaxABAgent, agMiniMaxABAgent, GameBoard.PLAYER1);
 
             playerMove = -1;
 
